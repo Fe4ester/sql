@@ -23,16 +23,23 @@ CREATE TABLE IF NOT EXISTS artists_genres (
 CREATE TABLE IF NOT EXISTS albums (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
-    release_year INT NOT NULL CHECK (release_year >= 1900),
+    release_year INT NOT NULL CHECK (release_year >= 1900)
+);
+
+-- Создание таблицы artists_albums (многие ко многим для artists и albums)
+CREATE TABLE IF NOT EXISTS artists_albums (
     artist_id INT NOT NULL,
-    FOREIGN KEY (artist_id) REFERENCES artists(id)
+    album_id INT NOT NULL,
+    PRIMARY KEY (artist_id, album_id),
+    FOREIGN KEY (artist_id) REFERENCES artists(id),
+    FOREIGN KEY (album_id) REFERENCES albums(id)
 );
 
 -- Создание таблицы tracks
 CREATE TABLE IF NOT EXISTS tracks (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
-    duration VARCHAR(10) NOT NULL CHECK (duration ~ '^[0-9]{1,2}:[0-9]{2}$'),
+    duration TIME NOT NULL,
     album_id INT NOT NULL,
     FOREIGN KEY (album_id) REFERENCES albums(id)
 );
@@ -42,15 +49,6 @@ CREATE TABLE IF NOT EXISTS collections (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     release_year INT NOT NULL CHECK (release_year >= 1900)
-);
-
--- Создание таблицы albums_collections
-CREATE TABLE IF NOT EXISTS albums_collections (
-    album_id INT NOT NULL,
-    collection_id INT NOT NULL,
-    PRIMARY KEY (album_id, collection_id),
-    FOREIGN KEY (album_id) REFERENCES albums(id),
-    FOREIGN KEY (collection_id) REFERENCES collections(id)
 );
 
 -- Создание таблицы tracks_collections
